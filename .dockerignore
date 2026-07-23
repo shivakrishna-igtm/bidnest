@@ -1,5 +1,8 @@
+build/classes
+build/generated
+build/tmp
+build/reports
 .gradle
-build
 .idea
 *.md
 src/test
