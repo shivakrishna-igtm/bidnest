@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BidNest — Auction Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design tokens ──────────────────────────────────────────────────── */
+    :root {
+      --bg-0:       #060a14;
+      --bg-1:       #0c1120;
+      --bg-2:       #111827;
+      --bg-card:    #131c2e;
+      --border:     #1e2d47;
+      --border-hi:  #2a4070;
+      --blue:       #3b82f6;
+      --indigo:     #6366f1;
+      --cyan:       #06b6d4;
+      --green:      #10b981;
+      --red:        #ef4444;
+      --amber:      #f59e0b;
+      --purple:     #a855f7;
+      --text-1:     #f1f5f9;
+      --text-2:     #94a3b8;
+      --text-3:     #475569;
+      --grad-main:  linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      --grad-fire:  linear-gradient(135deg, #dc2626 0%, #9333ea 100%);
+      --shadow-blue: 0 8px 32px rgba(59,130,246,.25);
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-0);
+      color: var(--text-1);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(6,10,20,.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--grad-main);
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-blue);
+    }
+    .logo-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      background: var(--grad-main);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      margin: 0 .25rem;
+    }
+    .header-sub {
+      font-size: .75rem;
+      color: var(--text-3);
+      font-weight: 400;
+    }
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .live-pill {
+      display: flex;
+      align-items: center;
+      gap: .375rem;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--green);
+      background: rgba(16,185,129,.08);
+      border: 1px solid rgba(16,185,129,.25);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 1.8s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .3; }
+    }
+
+    /* ── Hero ───────────────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(180deg, #0c1225 0%, var(--bg-0) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% -10%, rgba(99,102,241,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: .75rem;
+    }
+    .hero-title span {
+      background: var(--grad-main);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-2);
+      max-width: 540px;
+      margin: 0 auto;
+      font-weight: 400;
+    }
+
+    /* ── Page layout ─────────────────────────────────────────────────────── */
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2rem;
+      align-items: start;
+    }
+    .sidebar { display: flex; flex-direction: column; gap: 2rem; }
+
+    /* ── Section chrome ──────────────────────────────────────────────────── */
+    .section { margin-bottom: 2.75rem; }
+    .section-top {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+    .tag-blue   { background: rgba(59,130,246,.12); color: var(--blue);   border: 1px solid rgba(59,130,246,.3); }
+    .tag-green  { background: rgba(16,185,129,.12); color: var(--green);  border: 1px solid rgba(16,185,129,.3); }
+    .tag-red    { background: rgba(239,68,68,.12);  color: var(--red);    border: 1px solid rgba(239,68,68,.3);  }
+
+    /* ── Card ────────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--border-hi); }
+
+    /* ── Forms ───────────────────────────────────────────────────────────── */
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .875rem;
+    }
+    .span-2 { grid-column: span 2; }
+    .field { display: flex; flex-direction: column; gap: .35rem; }
+    label {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text-3);
+    }
+    input, textarea {
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .6rem .875rem;
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      font-size: .875rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+    textarea { resize: vertical; min-height: 76px; }
+    .form-footer { margin-top: 1.125rem; }
+
+    /* ── Buttons ─────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .6rem 1.375rem;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .15s, box-shadow .15s;
+    }
+    .btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
+    .btn-primary {
+      background: var(--grad-main);
+      color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) {
+      opacity: .9;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-blue);
+    }
+    .btn-fire {
+      background: var(--grad-fire);
+      color: #fff;
+      font-size: .9375rem;
+      font-weight: 700;
+      padding: .8rem 2rem;
+      letter-spacing: .01em;
+    }
+    .btn-fire:hover:not(:disabled) {
+      opacity: .9;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(220,38,38,.35);
+    }
+
+    /* ── Alert banners ───────────────────────────────────────────────────── */
+    .alert {
+      display: none;
+      align-items: center;
+      gap: .5rem;
+      margin-top: .875rem;
+      padding: .65rem .9rem;
+      border-radius: 8px;
+      font-size: .825rem;
+      font-weight: 500;
+      animation: fadeDown .25s ease;
+    }
+    .alert.show { display: flex; }
+    .alert-ok     { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.25); color: var(--green); }
+    .alert-err    { background: rgba(239,68,68,.08);  border: 1px solid rgba(239,68,68,.25);  color: var(--red);   }
+    .alert-warn   { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.25); color: var(--amber); }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Auctions grid & toolbar ─────────────────────────────────────────── */
+    .auctions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .refresh-row {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .72rem;
+      color: var(--text-3);
+    }
+    .spinner {
+      width: 12px; height: 12px;
+      border: 2px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      display: none;
+    }
+    .spinner.on { display: block; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .auctions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .a-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.125rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .a-card::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0; top: 0;
+      height: 2px;
+      background: var(--grad-main);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .a-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+    .a-card:hover::after { opacity: 1; }
+
+    .a-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; }
+    .a-title { font-weight: 600; font-size: .95rem; line-height: 1.35; flex: 1; }
+    .a-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem;
+      color: var(--text-3);
+      background: var(--bg-1);
+      padding: 2px 7px;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .a-desc {
+      font-size: .8rem;
+      color: var(--text-2);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .a-prices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .625rem;
+    }
+    .price-block {
+      background: var(--bg-1);
+      border-radius: 8px;
+      padding: .5rem .75rem;
+    }
+    .price-lbl {
+      font-size: .6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text-3);
+      margin-bottom: 2px;
+    }
+    .price-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    .price-val.hi { color: var(--amber); }
+    .price-val.none { font-family: 'Inter', sans-serif; font-size: .8rem; font-weight: 400; color: var(--text-3); }
+    .a-foot { display: flex; justify-content: space-between; align-items: center; }
+    .a-closes { font-size: .72rem; color: var(--text-3); }
+    .status-pill {
+      font-size: .6rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+    .s-open   { background: rgba(16,185,129,.12); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+    .s-closed { background: rgba(71,85,105,.2);   color: var(--text-3); border: 1px solid var(--border); }
+
+    .empty {
+      grid-column: 1/-1;
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-3);
+    }
+    .empty .e-icon { font-size: 2.5rem; margin-bottom: .625rem; }
+    .empty .e-title { font-weight: 600; font-size: .95rem; margin-bottom: .25rem; color: var(--text-2); }
+
+    /* ── Concurrency demo ────────────────────────────────────────────────── */
+    .demo-wrap {
+      background: linear-gradient(135deg, rgba(220,38,38,.04) 0%, rgba(139,92,246,.06) 100%);
+      border: 1px solid rgba(220,38,38,.2);
+      border-radius: 18px;
+      padding: 2.25rem;
+    }
+    .demo-hero { text-align: center; margin-bottom: 2rem; }
+    .demo-headline {
+      font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+      font-weight: 900;
+      letter-spacing: -.5px;
+      margin-bottom: .5rem;
+    }
+    .demo-desc {
+      font-size: .875rem;
+      color: var(--text-2);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .demo-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      align-items: flex-end;
+      margin-bottom: 1.75rem;
+    }
+    .demo-controls .field { min-width: 160px; }
+
+    /* Results */
+    .results-wrap { display: none; }
+    .results-wrap.show { display: block; animation: fadeDown .3s ease; }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.125rem;
+      font-size: .825rem;
+    }
+    .results-table th {
+      text-align: left;
+      padding: .5rem .875rem;
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text-3);
+      border-bottom: 1px solid var(--border);
+    }
+    .results-table td {
+      padding: .55rem .875rem;
+      border-bottom: 1px solid rgba(30,45,71,.6);
+      vertical-align: middle;
+    }
+    .result-row {
+      opacity: 0;
+      transform: translateX(-12px);
+      animation: rowIn .28s ease forwards;
+    }
+    @keyframes rowIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .r-bidder { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: var(--text-2); }
+    .r-status { font-weight: 700; font-size: .75rem; display: flex; align-items: center; gap: .35rem; }
+    .r-ok     { color: var(--green);  }
+    .r-ng     { color: var(--red);    }
+    .r-err    { color: var(--amber);  }
+    .r-detail { font-size: .75rem; color: var(--text-3); }
+    .r-time   { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--text-3); }
+
+    .demo-summary {
+      display: none;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      font-size: .9rem;
+      animation: fadeDown .35s ease;
+    }
+    .demo-summary.show { display: block; }
+    .sum-win  { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.25); color: var(--green); }
+    .sum-warn { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.25); color: var(--amber); }
+    .sum-err  { background: rgba(239,68,68,.08);  border: 1px solid rgba(239,68,68,.25);  color: var(--red);   }
+
+    /* ── Footer ──────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+    .footer-label {
+      font-size: .75rem;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .stack-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .5rem;
+    }
+    .stack-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--text-2);
+      transition: border-color .2s, color .2s;
+    }
+    .stack-pill:hover { border-color: var(--border-hi); color: var(--text-1); }
+
+    /* ── Responsive ──────────────────────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .two-col { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+    }
+    @media (max-width: 600px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .span-2 { grid-column: span 1; }
+      .hero { padding: 2rem 1rem 1.75rem; }
+      .page { padding: 1.5rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-mark">🔨</div>
+      <span class="logo-name">BidNest</span>
+    </a>
+    <div class="header-sep"></div>
+    <span class="header-sub">Auction Marketplace</span>
+    <div class="header-right">
+      <div class="live-pill"><div class="live-dot"></div> Live</div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-title">Real-time auctions,<br><span>zero race conditions.</span></div>
+  <p class="hero-sub">
+    Concurrent bids handled by Spring's optimistic locking.
+    Every write either wins cleanly or fails fast with a 409 — no silent data corruption, ever.
+  </p>
+</div>
+
+<!-- ── Main content ──────────────────────────────────────────────────────── -->
+<div class="page">
+  <div class="two-col">
+
+    <!-- Left: live auctions ───────────────────────────────────────────── -->
+    <div>
+      <div class="section">
+        <div class="auctions-bar">
+          <div class="section-top" style="margin-bottom:0">
+            <span class="section-title">Live Auctions</span>
+            <span class="tag tag-green">Auto-refresh 5s</span>
+          </div>
+          <div class="refresh-row">
+            <div class="spinner" id="spinner"></div>
+            <span id="refresh-ts">—</span>
+          </div>
+        </div>
+        <div class="auctions-grid" id="auctions-grid">
+          <div class="empty">
+            <div class="e-icon">⏳</div>
+            <div class="e-title">Loading auctions…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: sidebar forms ──────────────────────────────────────────── -->
+    <div class="sidebar">
+
+      <!-- Create Auction -->
+      <div class="section">
+        <div class="section-top">
+          <span class="section-title">Create Auction</span>
+          <span class="tag tag-blue">POST /api/auctions</span>
+        </div>
+        <div class="card">
+          <div class="field-grid">
+            <div class="field span-2">
+              <label>Title</label>
+              <input id="c-title" type="text" placeholder="Vintage Rolex, rare sneakers…" />
+            </div>
+            <div class="field span-2">
+              <label>Description</label>
+              <textarea id="c-desc" placeholder="Describe the item…"></textarea>
+            </div>
+            <div class="field">
+              <label>Starting Price ($)</label>
+              <input id="c-price" type="number" step="0.01" min="0" placeholder="100.00" />
+            </div>
+            <div class="field">
+              <label>Closes At</label>
+              <input id="c-closes" type="datetime-local" />
+            </div>
+          </div>
+          <div class="form-footer">
+            <button class="btn btn-primary" onclick="createAuction()">✦ Create Auction</button>
+          </div>
+          <div class="alert alert-ok"  id="c-ok"></div>
+          <div class="alert alert-err" id="c-err"></div>
+        </div>
+      </div>
+
+      <!-- Place Bid -->
+      <div class="section">
+        <div class="section-top">
+          <span class="section-title">Place a Bid</span>
+          <span class="tag tag-blue">POST /api/bids</span>
+        </div>
+        <div class="card">
+          <div class="field-grid">
+            <div class="field">
+              <label>Auction ID</label>
+              <input id="b-auction" type="number" placeholder="1" />
+            </div>
+            <div class="field">
+              <label>Bidder ID</label>
+              <input id="b-bidder" type="number" placeholder="42" />
+            </div>
+            <div class="field span-2">
+              <label>Bid Amount ($)</label>
+              <input id="b-amount" type="number" step="0.01" min="0" placeholder="250.00" />
+            </div>
+          </div>
+          <div class="form-footer">
+            <button class="btn btn-primary" onclick="placeBid()">⚡ Place Bid</button>
+          </div>
+          <div class="alert alert-ok"   id="b-ok"></div>
+          <div class="alert alert-err"  id="b-err"></div>
+          <div class="alert alert-warn" id="b-conflict"></div>
+        </div>
+      </div>
+
+    </div><!-- /sidebar -->
+  </div><!-- /two-col -->
+
+  <!-- Concurrency Demo ────────────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-top">
+      <span class="section-title">Concurrency Demo</span>
+      <span class="tag tag-red">Optimistic Locking Proof</span>
+    </div>
+    <div class="demo-wrap">
+      <div class="demo-hero">
+        <div class="demo-headline">🔥 Optimistic Locking Under Fire</div>
+        <p class="demo-desc">
+          10 threads slam the same auction simultaneously via <code style="font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--indigo)">Promise.all</code>.
+          Spring's <code style="font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--indigo)">@Version</code> field
+          lets exactly one through — the rest receive a <strong>409 CONFLICT</strong> and are saved as REJECTED.
+          No lost updates. No silent overwrites.
+        </p>
+      </div>
+
+      <div class="demo-controls">
+        <div class="field">
+          <label>Auction ID</label>
+          <input id="d-auction" type="number" placeholder="1" style="width:150px" />
+        </div>
+        <div class="field">
+          <label>Bid Amount ($)</label>
+          <input id="d-amount" type="number" step="0.01" placeholder="150.00" style="width:140px" />
+        </div>
+        <button class="btn btn-fire" id="fire-btn" onclick="fireBids()">
+          🔥 FIRE 10 SIMULTANEOUS BIDS
+        </button>
+      </div>
+
+      <div class="results-wrap" id="results-wrap">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Bidder</th>
+              <th>Result</th>
+              <th>Detail</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+        <div class="demo-summary" id="demo-summary"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ── Footer ────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-label">Built with</div>
+  <div class="stack-pills">
+    <span class="stack-pill">☕ Java 21</span>
+    <span class="stack-pill">🍃 Spring Boot</span>
+    <span class="stack-pill">🐘 PostgreSQL</span>
+    <span class="stack-pill">📨 Kafka</span>
+    <span class="stack-pill">☁️ AWS EC2</span>
+    <span class="stack-pill">🏗️ Terraform</span>
+    <span class="stack-pill">🐳 Docker</span>
+    <span class="stack-pill">⚙️ GitHub Actions</span>
+  </div>
+</footer>
+
+<script>
+  const API = 'http://18.225.216.132:8080';
+
+  /* ── Helpers ─────────────────────────────────────────────────────────── */
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function fmtMoney(n) {
+    return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function fmtDate(iso) {
+    return new Date(iso).toLocaleString(undefined, {
+      month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  function flash(id, msg, durationMs = 5000) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), durationMs);
+  }
+
+  function clearAlerts(...ids) {
+    ids.forEach(id => document.getElementById(id).classList.remove('show'));
+  }
+
+  /* ── Live auctions ───────────────────────────────────────────────────── */
+
+  async function fetchAuctions() {
+    const sp = document.getElementById('spinner');
+    sp.classList.add('on');
+    try {
+      const res  = await fetch(`${API}/api/auctions`);
+      const data = await res.json();
+      renderAuctions(Array.isArray(data) ? data : []);
+      document.getElementById('refresh-ts').textContent =
+        'Updated ' + new Date().toLocaleTimeString();
+    } catch {
+      document.getElementById('refresh-ts').textContent = 'Refresh failed';
+    } finally {
+      sp.classList.remove('on');
+    }
+  }
+
+  function renderAuctions(list) {
+    const grid = document.getElementById('auctions-grid');
+    if (!list.length) {
+      grid.innerHTML = `
+        <div class="empty">
+          <div class="e-icon">🏷️</div>
+          <div class="e-title">No auctions yet</div>
+          <div>Create one with the form →</div>
+        </div>`;
+      return;
+    }
+    grid.innerHTML = list.map(a => {
+      const open   = a.status === 'OPEN';
+      const highBid = a.currentHighestBid != null
+        ? `<span class="price-val hi">${fmtMoney(a.currentHighestBid)}</span>`
+        : `<span class="price-val none">No bids yet</span>`;
+      return `
+        <div class="a-card">
+          <div class="a-head">
+            <div class="a-title">${esc(a.title)}</div>
+            <div class="a-id">#${a.id}</div>
+          </div>
+          ${a.description ? `<div class="a-desc">${esc(a.description)}</div>` : ''}
+          <div class="a-prices">
+            <div class="price-block">
+              <div class="price-lbl">Starting</div>
+              <span class="price-val">${fmtMoney(a.startingPrice)}</span>
+            </div>
+            <div class="price-block">
+              <div class="price-lbl">Highest Bid</div>
+              ${highBid}
+            </div>
+          </div>
+          <div class="a-foot">
+            <div class="a-closes">⏰ ${fmtDate(a.closesAt)}</div>
+            <div class="status-pill ${open ? 's-open' : 's-closed'}">
+              ${open ? '● OPEN' : '✕ CLOSED'}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Create auction ──────────────────────────────────────────────────── */
+
+  async function createAuction() {
+    clearAlerts('c-ok', 'c-err');
+    const title      = document.getElementById('c-title').value.trim();
+    const description= document.getElementById('c-desc').value.trim();
+    const price      = document.getElementById('c-price').value;
+    const closesRaw  = document.getElementById('c-closes').value;
+
+    if (!title || !price || !closesRaw) {
+      flash('c-err', '⚠ Title, starting price, and closing time are required.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/api/auctions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sellerId: 1,
+          title,
+          description,
+          startingPrice: parseFloat(price),
+          closesAt: new Date(closesRaw).toISOString()
+        })
+      });
+      if (res.ok) {
+        const a = await res.json();
+        flash('c-ok', `✓ Auction #${a.id} "${a.title}" created!`);
+        document.getElementById('c-title').value  = '';
+        document.getElementById('c-desc').value   = '';
+        document.getElementById('c-price').value  = '';
+        document.getElementById('c-closes').value = '';
+        fetchAuctions();
+      } else {
+        const body = await res.json().catch(() => ({}));
+        flash('c-err', `✕ ${body.message || res.statusText}`);
+      }
+    } catch {
+      flash('c-err', '✕ Network error — is the server running?');
+    }
+  }
+
+  /* ── Place bid ───────────────────────────────────────────────────────── */
+
+  async function placeBid() {
+    clearAlerts('b-ok', 'b-err', 'b-conflict');
+    const auctionId = parseInt(document.getElementById('b-auction').value);
+    const bidderId  = parseInt(document.getElementById('b-bidder').value);
+    const bidAmount = parseFloat(document.getElementById('b-amount').value);
+
+    if (!auctionId || !bidderId || !bidAmount) {
+      flash('b-err', '⚠ All fields are required.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/api/bids`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auctionId, bidderId, bidAmount })
+      });
+      if (res.ok) {
+        const bid = await res.json();
+        flash('b-ok', `BID ACCEPTED ✓  —  Bid #${bid.id} for ${fmtMoney(bid.bidAmount)} is winning!`);
+        fetchAuctions();
+      } else if (res.status === 409) {
+        flash('b-conflict', '⚡ OUTBID — someone else bid faster! Try a higher amount.');
+      } else {
+        const body = await res.json().catch(() => ({}));
+        flash('b-err', `✕ ${body.message || res.statusText}`);
+      }
+    } catch {
+      flash('b-err', '✕ Network error — is the server running?');
+    }
+  }
+
+  /* ── Concurrency demo ────────────────────────────────────────────────── */
+
+  async function fireBids() {
+    const auctionId = parseInt(document.getElementById('d-auction').value);
+    const bidAmount = parseFloat(document.getElementById('d-amount').value) || 150.00;
+
+    if (!auctionId) { alert('Enter an Auction ID first.'); return; }
+
+    const btn = document.getElementById('fire-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Firing…';
+
+    const tbody  = document.getElementById('results-body');
+    const wrap   = document.getElementById('results-wrap');
+    const summary= document.getElementById('demo-summary');
+
+    tbody.innerHTML = '';
+    summary.className = 'demo-summary';
+    wrap.classList.add('show');
+
+    let accepted = 0, rejected = 0, errors = 0;
+
+    const shoot = (bidderId) => {
+      const t0 = performance.now();
+      return fetch(`${API}/api/bids`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auctionId, bidderId, bidAmount })
+      }).then(async res => {
+        const ms = Math.round(performance.now() - t0);
+        if (res.ok) {
+          accepted++;
+          addRow(bidderId, '✓ ACCEPTED', 'r-ok', 'Winner', ms);
+        } else if (res.status === 409) {
+          rejected++;
+          addRow(bidderId, '✕ OUTBID', 'r-ng', 'Lock conflict', ms);
+        } else {
+          errors++;
+          const b = await res.json().catch(() => ({}));
+          addRow(bidderId, `✕ ${res.status}`, 'r-err', b.message || res.statusText, ms);
+        }
+      }).catch(e => {
+        const ms = Math.round(performance.now() - t0);
+        errors++;
+        addRow(bidderId, '✕ ERROR', 'r-err', e.message, ms);
+      });
+    };
+
+    await Promise.all(Array.from({ length: 10 }, (_, i) => shoot(i + 1)));
+
+    /* Summary */
+    let msg, cls;
+    if (accepted === 1 && rejected === 9 && errors === 0) {
+      msg = `1 ACCEPTED, 9 REJECTED — optimistic locking working correctly ✓`;
+      cls = 'sum-win';
+    } else if (accepted === 0) {
+      msg = `0 ACCEPTED, ${rejected} REJECTED, ${errors} errors — check auction ID and status`;
+      cls = 'sum-err';
+    } else {
+      msg = `${accepted} ACCEPTED, ${rejected} REJECTED${errors ? `, ${errors} errors` : ''}`;
+      cls = 'sum-warn';
+    }
+    summary.textContent = msg;
+    summary.className = `demo-summary show ${cls}`;
+
+    btn.disabled = false;
+    btn.textContent = '🔥 FIRE 10 SIMULTANEOUS BIDS';
+    fetchAuctions();
+  }
+
+  function addRow(bidderId, label, cls, detail, ms) {
+    const tr = document.createElement('tr');
+    tr.className = 'result-row';
+    tr.innerHTML = `
+      <td class="r-bidder">Bidder #${bidderId}</td>
+      <td><span class="r-status ${cls}">${label}</span></td>
+      <td class="r-detail">${esc(detail)}</td>
+      <td class="r-time">${ms}ms</td>`;
+    document.getElementById('results-body').appendChild(tr);
+  }
+
+  /* ── Init ────────────────────────────────────────────────────────────── */
+
+  // Pre-fill closing time to 24 h from now
+  (() => {
+    const d = new Date(Date.now() + 86400000);
+    d.setSeconds(0, 0);
+    document.getElementById('c-closes').value = d.toISOString().slice(0, 16);
+  })();
+
+  fetchAuctions();
+  setInterval(fetchAuctions, 5000);
+</script>
+</body>
+</html>
