@@ -3,10 +3,12 @@ package bidnest.bid;
 import bidnest.auction.Auction;
 import bidnest.auction.AuctionRepository;
 import bidnest.auction.AuctionStatus;
+import bidnest.events.BidEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 // Proves that the @Version-based optimistic locking on Auction prevents concurrent bids from
 // all succeeding: exactly one bid wins the race and the rest are rejected with a 409 CONFLICT.
 @SpringBootTest
+@MockitoBean(types = BidEventPublisher.class)
 class BidConcurrencyTest {
 
     @Autowired
@@ -111,3 +114,8 @@ class BidConcurrencyTest {
                 "Auction currentHighestBid should equal the winning bid amount");
     }
 }
+
+
+
+
+

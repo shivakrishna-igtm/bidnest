@@ -2,6 +2,8 @@ package bidnest.bid;
 
 import bidnest.auction.Auction;
 import bidnest.auction.AuctionRepository;
+import bidnest.events.BidAcceptedEvent;
+import bidnest.events.BidEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +16,13 @@ public class AuctionBidUpdater {
 
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
+    private final BidEventPublisher bidEventPublisher;
 
-    public AuctionBidUpdater(AuctionRepository auctionRepository, BidRepository bidRepository) {
+    public AuctionBidUpdater(AuctionRepository auctionRepository, BidRepository bidRepository,
+                             BidEventPublisher bidEventPublisher) {
         this.auctionRepository = auctionRepository;
         this.bidRepository = bidRepository;
+        this.bidEventPublisher = bidEventPublisher;
     }
 
     @Transactional
@@ -34,7 +39,12 @@ public class AuctionBidUpdater {
         auctionRepository.save(auction);
 
         bid.setStatus(BidStatus.ACCEPTED);
-        return bidRepository.save(bid);
+        bid = bidRepository.save(bid);
+
+        bidEventPublisher.publishBidAccepted(new BidAcceptedEvent(
+                auction.getId(), bid.getId(), bidderId, bidAmount, Instant.now()));
+
+        return bid;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
