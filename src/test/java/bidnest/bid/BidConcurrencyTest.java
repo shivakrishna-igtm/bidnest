@@ -114,8 +114,3 @@ class BidConcurrencyTest {
                 "Auction currentHighestBid should equal the winning bid amount");
     }
 }
-
-
-
-
-
